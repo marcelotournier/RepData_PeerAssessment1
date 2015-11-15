@@ -7,11 +7,17 @@ output:
 
 
 ## Loading and preprocessing the data
-
-
+library(dplyr)
+unzip("activity.zip")
+activity=read.csv('activity.csv')
+activity$date=as.Date(activity$date)
+activ2=subset(activity,!is.na(activity$steps))
 
 ## What is mean total number of steps taken per day?
-
+mean(activity$steps, na.rm=TRUE)
+library(plyr)
+act2=ddply(activity, .(date),summarize, mean=mean(steps))
+plot(act2$steps.per.day~act2$date, type='l', xlab='Date',ylab='Total Steps per Day')
 
 
 ## What is the average daily activity pattern?
