@@ -7,25 +7,59 @@ output:
 
 
 ## Loading and preprocessing the data
-library(dplyr)
+library(plyr)
 unzip("activity.zip")
 activity=read.csv('activity.csv')
 activity$date=as.Date(activity$date)
 activ2=subset(activity,!is.na(activity$steps))
 
-## What is mean total number of steps taken per day?
-mean(activity$steps, na.rm=TRUE)
-library(plyr)
-act2=ddply(activity, .(date),summarize, mean=mean(steps))
+act2=ddply(activ2, .(date),summarize, steps.per.day=sum(steps))
 plot(act2$steps.per.day~act2$date, type='l', xlab='Date',ylab='Total Steps per Day')
+
+## What is mean total number of steps taken per day?
+act2=ddply(activ2, .(date),summarize, steps.per.day=sum(steps))
+# What is mean total number of steps taken per day?
+# For this part of the assignment, you can ignore the missing values in the dataset.
+# 1. Calculate the total number of steps taken per day
+act2=ddply(activ2, .(date),summarize, steps.per.day=sum(steps))
+act2
+# 2. If you do not understand the difference between a histogram and a barplot, research the difference between them. Make a histogram of the total number of steps taken each day
+
+hist(act2$steps.per.day, col = 'orange',xlab='Steps per Day', main='Distribution of frequencies - Total steps per day')
+
+# 3. Calculate and report the mean and median of the total number of steps taken per day
+mean(act2$steps.per.day)
+median(act2$steps.per.day)
+
 
 
 ## What is the average daily activity pattern?
+# 1. Make a time series plot (i.e. type="l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
+act3=ddply(activ2, .(interval),summarize, steps.per.interval=sum(steps))
 
+plot(act3$steps.per.interval~act3$interval, type='l', xlab='Interval(5 min)',ylab='Avg. Steps per Interval', col = '#04B45F', lwd=2, bty="n")
+xx <- c(act3$interval, rev(act3$interval))
+yy <- c(rep(0, nrow(act3)), rev(act3$steps.per.interval))
+polygon(xx, yy, col='#04B45F')
+#2. Which 5-minute interval ,on average across all the days in the dataset, contains the maximum number of steps?
+act3$interval[which.max(act3$steps.per.interval)]
+maxval=max(act3$steps.per.interval)
+maxx=act3$interval[which.max(act3$steps.per.interval)]
+abline(v=maxx)
+text(maxx,0,labels=maxx)
 
 ## Imputing missing values
 
+# Note that there are a number of days/intervals where there are missing values (coded as NA). The presence of missing days may introduce bias into some calculations or summaries of the data.
+
+# Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+
+# Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+
+# Create a new dataset that is equal to the original dataset but with the missing data filled in.
+
+# Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
